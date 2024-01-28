@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter.scrolledtext import ScrolledText
 import threading, time, pyautogui, keyboard #os
-#1.0.2
+#1.0.3
 class AutoTyperApp(tk.Frame):
     def __init__(self, master):
         super().__init__()
