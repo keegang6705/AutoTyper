@@ -2,9 +2,10 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter.scrolledtext import ScrolledText
 import threading, time, pyautogui, keyboard #os
-
-class AutoTyperApp:
+#1.0.2
+class AutoTyperApp(tk.Frame):
     def __init__(self, master):
+        super().__init__()
         self.master = master
         self.master.title("AutoTyper - Stopped")
 
@@ -26,7 +27,7 @@ class AutoTyperApp:
         self.master.attributes('-topmost', 1)
 
         self.text_entry = ScrolledText(master, width=45, height=10, wrap=tk.WORD)
-        self.text_entry.grid(row=0, column=0, columnspan=3, padx=10, pady=10)
+        self.text_entry.grid(row=0, column=0, columnspan=3, padx=10, pady=10,sticky="nsew")
 
         self.import_button = tk.Button(master, text="Import Text File", command=self.import_text_file)
         self.import_button.grid(row=1, column=0, padx=10, sticky=tk.W)
@@ -54,6 +55,28 @@ class AutoTyperApp:
             master.grid_columnconfigure(i, weight=1)
 
         keyboard.add_hotkey('F8', self.toggle_start_stop)
+        self.bind("<B1-Motion>", self.on_resize)
+        self.bind("<ButtonRelease-1>", self.stop_resizing)
+
+        # Set the resizing flag to False initially
+        self.resizing = False
+
+    def on_resize(self, event):
+        if self.resizing:
+            # Calculate the new size based on the mouse position
+            new_width = self.winfo_pointerx() - self.winfo_rootx()
+            new_height = self.winfo_pointery() - self.winfo_rooty()
+
+            # Set the new size for the window
+            self.geometry(f"{new_width}x{new_height}")
+
+    def start_resizing(self, event):
+        # Set the resizing flag to True
+        self.resizing = True
+
+    def stop_resizing(self, event):
+        # Set the resizing flag to False
+        self.resizing = False
 
     def import_text_file(self):
         file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
@@ -123,6 +146,6 @@ class AutoTyperApp:
         self.running = False
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    app = AutoTyperApp(root)
-    root.mainloop()
+    root = tk.Tk()  # Create an instance of Tk()
+    app = AutoTyperApp(master=root)  # Pass Tk() instance as master
+    app.mainloop()
